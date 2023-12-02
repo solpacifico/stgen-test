@@ -1,0 +1,122 @@
+﻿@page "/AnimalList"
+
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor
+@inject StateContainer StateContainer
+@inject NavigationManager Navigation
+
+@using stgen_demo_data
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <SfGrid @ref="@Grid" DataSource="@GridData"  Toolbar="@(new List<string>() { "Add", "Delete", "Update", "Cancel" })" AllowPaging="true"  AllowFiltering= "true" AllowSorting="true">
+                <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Batch" ></GridEditSettings>
+                <GridPageSettings PageSize="10"></GridPageSettings>
+                <GridEvents RowDeselected="RowDeselectHandler" RowSelected="RowselectHandler"  Created="CreatedHandler"  TValue="Animal" ></GridEvents> 
+                 <GridSelectionSettings Type="SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
+                 <GridAggregates>
+                    <GridAggregate>
+                        <GridAggregateColumns>
+                            <GridAggregateColumn Field="@nameof(Animal.Price)" Type="AggregateType.Sum" Format="C2">
+                                <FooterTemplate>
+                                    @{ var SumValue = (context as AggregateTemplateContext);
+                                    <div>
+                                        Sum: @SumValue.Sum
+                                    </div>
+                                    }
+                                </FooterTemplate>
+                            </GridAggregateColumn>
+                        </GridAggregateColumns>
+                    </GridAggregate>
+                 </GridAggregates>
+                    <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn> 
+                    <GridColumn Field=@nameof(Animal.AnimalID) HeaderText="Animal ID" IsPrimaryKey="true" ValidationRules="@(new ValidationRules{ Required=true, Number=true})" TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Name) HeaderText="Animal Name" ValidationRules="@(new ValidationRules{ Required=true})" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Breed) HeaderText="Breed" EditType="EditType.DropDownEdit"  TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Sex) HeaderText="Sex" EditType="EditType.DropDownEdit"  TextAlign="TextAlign.Right"  Width="160"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.DOB) HeaderText="Date of Birth" EditType="EditType.DatePickerEdit" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="160"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Price) HeaderText="Price"  ValidationRules="@(new ValidationRules{ Required=true, Number=true})" TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Status) HeaderText="Status"  EditType="EditType.DropDownEdit" TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                     
+                </GridColumns>
+            </SfGrid>
+        </div>
+        <div class="row">
+            <button class="btn btn-primary" @onclick="GotoSp">Go to Shopping Cart</button>
+        </div>
+    </div>
+</div>
+
+
+@code{
+    
+    public List<Animal> GridData { get; set; }
+    SfGrid<Animal> Grid {get; set;}
+
+   
+    public string DefaultStatus = Status.Active.ToString();
+
+    public EventCallback<RowDeselectEventArgs<Animal>> RowDeselecting { get; set; }
+    public EventCallback<RowSelectEventArgs<Animal>> RowSelected { get; set; }
+    public EventCallback<RowUpdatedEventArgs<Animal>> RowUpdated { get; set; }
+
+    
+    public void CreatedHandler()
+    {
+        if(StateContainer.SavedSP.Content != null)
+        {
+           int[] indexes = new int[StateContainer.SavedSP.Content.Count];
+            
+            Task<List<Animal>>  records =   Grid.GetCurrentViewRecordsAsync();
+            int i = 0;
+            foreach(Animal item in StateContainer.SavedSP.Content)
+            {
+                indexes[i] =  records.Result.FindIndex(  x => x.AnimalID == item.AnimalID);
+                
+                i++;
+            }
+            Grid.SelectRowsAsync(indexes);
+        }
+    }
+    
+
+
+
+    protected override async void OnInitialized()
+    {
+        GridData = Animal.GetAnimals();
+       
+        
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    public void RowDeselectHandler(RowDeselectEventArgs<Animal> args)
+    {
+        StateContainer.RemoveFromSP(args.Data);
+    }
+
+    public void RowselectHandler(RowSelectEventArgs<Animal> args)
+    {
+        
+        StateContainer.AddToSP(args.Data);
+       
+        
+
+    }
+    public void GotoSp()
+    {        
+        Navigation.NavigateTo("ShoppingCartPage");
+
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    
+
+    
+}

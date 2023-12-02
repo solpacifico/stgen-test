@@ -1,0 +1,7 @@
+{
+    "name": "Attach and Debug",
+    "type": "blazorwasm",
+    "request": "attach",
+    "url": "{http://localhost:5024/}",
+  
+  }

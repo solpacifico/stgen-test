@@ -1,0 +1,154 @@
+﻿@page "/ShoppingCartPage"
+
+
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor
+@inject StateContainer StateContainer
+@using stgen_demo_data
+@using System.Globalization
+<h3>ShoppingCart</h3>
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <SfGrid DataSource="@GridData"  AllowSorting="true" AllowGrouping="true" >
+                    <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
+               
+                    <GridColumns>
+                    
+                    <GridColumn Field=@nameof(Animal.AnimalID) HeaderText="Animal ID" IsPrimaryKey="true" ValidationRules="@(new ValidationRules{ Required=true, Number=true})" TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Name) HeaderText="Animal Name" ValidationRules="@(new ValidationRules{ Required=true})" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Breed) HeaderText="Breed" EditType="EditType.DropDownEdit"  TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Sex) HeaderText="Sex" EditType="EditType.DropDownEdit"  TextAlign="TextAlign.Right"  Width="160"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.DOB) HeaderText="Date of Birth" EditType="EditType.DatePickerEdit" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="160"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Price) HeaderText="Price" ValidationRules="@(new ValidationRules{ Required=true, Number=true})" TextAlign="TextAlign.Right"  Width="140"></GridColumn>
+                    <GridColumn Field=@nameof(Animal.Status) HeaderText="Status"  EditType="EditType.DropDownEdit" TextAlign="TextAlign.Right"  Width="140"></GridColumn> 
+                     
+                </GridColumns>
+            </SfGrid>
+        </div>
+        <div class="row" style="width: 500px;">
+            <div class="col"><h3>Subtotal:</h3></div><div class="col"><h3> @Subtotal</h3></div>
+        </div>
+        <div class="row" style="width: 500px;">
+            <div class="col">
+                <h3>Freight: </h3>
+            </div>
+            <div class="col">
+                <h3>@Freight</h3> 
+            </div>           
+        </div>
+        <div class="row" style="width: 500px;">
+           <div class="col">
+                <h3>Discounts: </h3> 
+           </div> 
+           <div class="col">
+                <h3>@Discounts</h3>
+           </div>
+        </div>
+        <div class="row" style="width: 500px;">
+           <div class="col">
+                <h3>Total: </h3>
+            </div>
+            <div class="col">
+                    <h3>  @Total</h3>            
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    
+
+    const decimal BASE_FREIGHT = 1000;
+    const double BREED_QTY_DISCOUNT = 0.05;
+
+    const int BREED_QTY_TO_APPLY_DISCOUNT = 5;
+
+    const double TOTAL_ORDER_QTY_DISCOUNT = 0.03;
+
+    const int TOTAL_QTY_TO_APPLY_DISCOUNT = 10;
+
+
+    public List<Animal> GridData { get; set; }
+    public string? Subtotal {get; set;}
+
+    public string?  Freight{get; set;}
+
+    public string? Discounts{get; set;}
+
+    public string? Total{get; set;}
+
+    public string[] GroupedColumns = new string[] { "Breed" };
+    
+    public string DefaultStatus = Status.Active.ToString();
+
+    CultureInfo culture =  new CultureInfo("en-US");
+
+    
+
+     protected override void OnInitialized()
+    {
+        GridData = StateContainer.SavedSP.Content;        
+        StateContainer.OnChange += StateHasChanged;
+        CalculateTotal();
+    }
+
+    protected decimal CalculateSubtotal( )
+    {
+       decimal res = StateContainer.SavedSP.Content.Sum((agg) => agg.Price);        
+       Subtotal =  string.Format(culture ,"{0:C}",res);
+        return res;
+    }
+
+     protected decimal  CalculateFreight( )
+    {
+       decimal res = BASE_FREIGHT;
+       if(StateContainer.SavedSP.Content.Count > 20)
+       {
+            res = 0;
+       }
+       Freight = string.Format(culture, "{0:C}",res);      
+        return res;
+    }
+
+    protected decimal CalculateDiscounts()
+    {
+        
+        double res= 0;
+        if(StateContainer.SavedSP.Content.Count > BREED_QTY_TO_APPLY_DISCOUNT)
+        {
+            decimal totalAboveQTY=0;
+            for(int i=BREED_QTY_TO_APPLY_DISCOUNT; i< StateContainer.SavedSP.Content.Count; i++)
+            {
+                totalAboveQTY += StateContainer.SavedSP.Content[i].Price;
+                Console.WriteLine(StateContainer.SavedSP.Content[i].Price);
+            }
+            res = res += Convert.ToDouble(totalAboveQTY) * BREED_QTY_DISCOUNT;
+        }
+
+       
+         
+       if(StateContainer.SavedSP.Content.Count > TOTAL_QTY_TO_APPLY_DISCOUNT)
+       {
+            double Subtotal = Convert.ToDouble(StateContainer.SavedSP.Content.Sum((agg) => agg.Price));  
+            res += (Subtotal - res) * TOTAL_ORDER_QTY_DISCOUNT;
+       }
+       
+       Discounts = string.Format(culture,"{0:C}",res); 
+       return Convert.ToDecimal(res);
+        
+    }
+
+
+    private void CalculateTotal()
+    {
+        decimal res;
+        res = CalculateSubtotal();
+        res = res + CalculateFreight();
+        res = res - CalculateDiscounts();
+        Total = string.Format(culture , "{0:C}",res);    
+    }
+
+
+}
