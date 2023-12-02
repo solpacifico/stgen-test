@@ -59,56 +59,60 @@
 
 @code {
     
-
+ #region Constants
     const decimal BASE_FREIGHT = 1000;
     const double BREED_QTY_DISCOUNT = 0.05;
-
     const int BREED_QTY_TO_APPLY_DISCOUNT = 5;
 
     const double TOTAL_ORDER_QTY_DISCOUNT = 0.03;
 
     const int TOTAL_QTY_TO_APPLY_DISCOUNT = 10;
 
+    const int FREIGHT_QTY_DISCOUNT =20;
+ #endregion
 
+#region Properties
+    //Data source for grid
     public List<Animal> GridData { get; set; }
+    //Subtotal string Data
     public string? Subtotal {get; set;}
-
+    //Freight string data
     public string?  Freight{get; set;}
-
+    //Discount string data to show in page
     public string? Discounts{get; set;}
-
+    //Total string data to show in page
     public string? Total{get; set;}
-
+    //Groupin field
     public string[] GroupedColumns = new string[] { "Breed" };
-    
+    //Default status
     public string DefaultStatus = Status.Active.ToString();
-
+    //Globalization culture
     CultureInfo culture =  new CultureInfo("en-US");
-
+#endregion
     
-
+    //Initialize method
      protected override void OnInitialized()
     {
-        GridData = StateContainer.SavedSP.Content;        
-        StateContainer.OnChange += StateHasChanged;
-        CalculateTotal();
+        GridData = StateContainer.SavedSP.Content; //Loads saved state       
+        StateContainer.OnChange += StateHasChanged; //Register change event
+        CalculateTotal(); //Refresh totals
     }
-
+    //Calculate subtotal
     protected decimal CalculateSubtotal( )
     {
        decimal res = StateContainer.SavedSP.Content.Sum((agg) => agg.Price);        
-       Subtotal =  string.Format(culture ,"{0:C}",res);
-        return res;
+       Subtotal =  string.Format(culture ,"{0:C}",res); //Updates the string to show
+       return res;
     }
-
+    //Calculate freight
      protected decimal  CalculateFreight( )
     {
        decimal res = BASE_FREIGHT;
-       if(StateContainer.SavedSP.Content.Count > 20)
+       if(StateContainer.SavedSP.Content.Count > FREIGHT_QTY_DISCOUNT) //Check the QTY for grant freight discount
        {
             res = 0;
        }
-       Freight = string.Format(culture, "{0:C}",res);      
+       Freight = string.Format(culture, "{0:C}",res);   //Format string
         return res;
     }
 
@@ -116,23 +120,22 @@
     {
         
         double res= 0;
-        if(StateContainer.SavedSP.Content.Count > BREED_QTY_TO_APPLY_DISCOUNT)
+        if(StateContainer.SavedSP.Content.Count > BREED_QTY_TO_APPLY_DISCOUNT) //Initial QTY check
         {
             decimal totalAboveQTY=0;
-            for(int i=BREED_QTY_TO_APPLY_DISCOUNT; i< StateContainer.SavedSP.Content.Count; i++)
+            for(int i=BREED_QTY_TO_APPLY_DISCOUNT; i< StateContainer.SavedSP.Content.Count; i++) //Sums discounts for QTY Above 5 
             {
-                totalAboveQTY += StateContainer.SavedSP.Content[i].Price;
-                Console.WriteLine(StateContainer.SavedSP.Content[i].Price);
+                totalAboveQTY += StateContainer.SavedSP.Content[i].Price;                
             }
-            res = res += Convert.ToDouble(totalAboveQTY) * BREED_QTY_DISCOUNT;
+            res = res += Convert.ToDouble(totalAboveQTY) * BREED_QTY_DISCOUNT; //Calculate initial discount
         }
 
        
          
-       if(StateContainer.SavedSP.Content.Count > TOTAL_QTY_TO_APPLY_DISCOUNT)
+       if(StateContainer.SavedSP.Content.Count > TOTAL_QTY_TO_APPLY_DISCOUNT) //Discount for QTY > 20
        {
-            double Subtotal = Convert.ToDouble(StateContainer.SavedSP.Content.Sum((agg) => agg.Price));  
-            res += (Subtotal - res) * TOTAL_ORDER_QTY_DISCOUNT;
+            double Subtotal = Convert.ToDouble(StateContainer.SavedSP.Content.Sum((agg) => agg.Price));  //subtotal without discount
+            res += (Subtotal - res) * TOTAL_ORDER_QTY_DISCOUNT; //Discount the first discount and recalculate for discount again
        }
        
        Discounts = string.Format(culture,"{0:C}",res); 

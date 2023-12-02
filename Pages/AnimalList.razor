@@ -51,18 +51,22 @@
 
 
 @code{
-    
+       
+    //Main dataobject
     public List<Animal> GridData { get; set; }
+    //Grid Reference
     SfGrid<Animal> Grid {get; set;}
 
    
     public string DefaultStatus = Status.Active.ToString();
 
+    #region EventHandlers
     public EventCallback<RowDeselectEventArgs<Animal>> RowDeselecting { get; set; }
     public EventCallback<RowSelectEventArgs<Animal>> RowSelected { get; set; }
     public EventCallback<RowUpdatedEventArgs<Animal>> RowUpdated { get; set; }
+    #endregion
 
-    
+    //Handler method to load the persistence
     public void CreatedHandler()
     {
         if(StateContainer.SavedSP.Content != null)
@@ -83,28 +87,24 @@
     
 
 
-
+    //Initialize method
     protected override async void OnInitialized()
     {
-        GridData = Animal.GetAnimals();
-       
-        
+        GridData = Animal.GetAnimals();       
         StateContainer.OnChange += StateHasChanged;
     }
-
+    //Handles deselect Action
     public void RowDeselectHandler(RowDeselectEventArgs<Animal> args)
     {
         StateContainer.RemoveFromSP(args.Data);
     }
 
+    //Handles Select Action
     public void RowselectHandler(RowSelectEventArgs<Animal> args)
-    {
-        
-        StateContainer.AddToSP(args.Data);
-       
-        
-
+    {        
+        StateContainer.AddToSP(args.Data);     
     }
+    //Navigates to Shopping cart
     public void GotoSp()
     {        
         Navigation.NavigateTo("ShoppingCartPage");

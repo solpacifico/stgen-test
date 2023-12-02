@@ -1,3 +1,6 @@
+/// <summary>
+/// This Class is intended for maintain the Shopping cart data
+/// </summary>
  public class ShoppingCart
 {
     public List<Animal> Content {get; set;}

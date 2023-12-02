@@ -1,5 +1,18 @@
+   /// <summary>
+   /// Main class to store and manage the aaplication data
+   /// </summary>
    public class Animal
     {
+        /// <summary>
+        /// Constructor for mock data
+        /// </summary>
+        /// <param name="animalID"></param>
+        /// <param name="name"></param>
+        /// <param name="breed"></param>
+        /// <param name="dOB"></param>
+        /// <param name="sex"></param>
+        /// <param name="price"></param>
+        /// <param name="status"></param>
         public Animal( int animalID, string name,  string breed, DateTime dOB ,string sex, decimal price, string status)
         {   
             this.AnimalID=animalID;
@@ -11,17 +24,45 @@
             this.Status = status;
 
         }
-
+    /// <summary>
+    /// Constructor 
+    /// </summary>
         public Animal(){}
-
+         
+        
+        /// <summary>
+        /// Primary Key of Data
+        /// </summary>
         public int AnimalID  {get; set;}
+        /// <summary>
+        /// Name of animal
+        /// </summary>
         public string Name {get; set;}
+        /// <summary>
+        /// breed of Animal
+        /// </summary>
         public string Breed{get; set;}
+        /// <summary>
+        /// DateTime of Animal
+        /// </summary>
         public DateTime DOB {get; set;}
+        /// <summary>
+        /// Sex of animal;
+        /// </summary>
         public string Sex {get; set;}
+        /// <summary>
+        /// Price of animal
+        /// </summary>
         public decimal Price {get; set;}
+        /// <summary>
+        /// Status: active or inactive
+        /// </summary>
         public string Status {get; set;}
 
+    /// <summary>
+    /// Generate fake data for playground 
+    /// </summary>
+    /// <returns>List of Animals</returns>
         public static List<Animal>GetAnimals()
         {
             List<Animal> animals =  new List<Animal>();
