@@ -1,6 +1,9 @@
  public class ShoppingCart
 {
     public List<Animal> Content {get; set;}
+    /**
+        
+    */
     public ShoppingCart(){
         this.Content=new List<Animal>();
     }
