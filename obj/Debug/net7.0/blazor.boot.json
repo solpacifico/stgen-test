@@ -1,7 +1,7 @@
 {
   "entryAssembly": "stgen-test",
   "resources": {
-    "hash": "sha256-n4XGOG/FLL9KjzADK3rWC1YKCJ1XrktMmhXYQ6K9qdE=",
+    "hash": "sha256-9wwrA1iSh0UQpZnjjfUo3CAtO1ttEWFivHqSJVm3W6w=",
     "runtime": {
       "dotnet.7.0.14.esd5hyslz2.js": "sha256-YWGUknGRzP/fgO6YjvCJKPVQNZAPEd6ll+rHfQEIW+I=",
       "dotnet.timezones.blat": "sha256-t5xviiOQTfAsF0UDhmcyalKiaehUmf/sqJl97tmPM0M=",
@@ -217,10 +217,10 @@
       "mscorlib.dll": "sha256-YcsJInaT/kw3Vrm+SESegPxvT/Lr9RE6rE/KnxWIIc0=",
       "netstandard.dll": "sha256-TztlSRjADgiEABbiAMdWZpHrUVd8wnRtQRAvlwmRP/4=",
       "System.Private.CoreLib.dll": "sha256-BAhrZ8Zg3cJKQipxdzqQo+9jtPkOkRx1ou3oIhDohtk=",
-      "stgen-test.dll": "sha256-HzRitsgSnE1IulP9b2qz7E5KyIkbqdi9xmjbdcFCCLM="
+      "stgen-test.dll": "sha256-8s7cRYiYSP6dLUr+6q5+glgViKgfFPvFrM+2k3EJQVo="
     },
     "pdb": {
-      "stgen-test.pdb": "sha256-JjH448ECnfF/D0D7dEhsdw52D6BZ/Gg5WzlXEpoC+Eo="
+      "stgen-test.pdb": "sha256-SlBx06CTCzDMJ8z8Q3hFYcG1IUvhMEW2RFaYOJJSEtU="
     },
     "runtimeAssets": {
       "dotnet.wasm": {

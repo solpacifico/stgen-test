@@ -885,3 +885,4 @@
 /Users/betofk/Documents/repos/stgen-test/bin/Debug/net7.0/wwwroot/_framework/icudt.dat.gz
 /Users/betofk/Documents/repos/stgen-test/bin/Debug/net7.0/icudt.dat
 /Users/betofk/Documents/repos/stgen-test/obj/Debug/net7.0/compressed/ygp1v49yey.gz
+/Users/betofk/Documents/repos/stgen-test/obj/Debug/net7.0/stgen-test.sourcelink.json
